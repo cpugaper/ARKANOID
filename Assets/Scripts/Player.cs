@@ -6,13 +6,9 @@ public class Player : MonoBehaviour
 {
 
     public Rigidbody2D rigidBody2D;
-
     private float inputValue;
-
     public float moveSpeed = 25;
-
     private Vector2 direction;
-
     Vector2 startPosition;
 
     private void Start()
@@ -45,7 +41,6 @@ public class Player : MonoBehaviour
     public void ResetPlayer()
     {
         transform.position = startPosition;
-
         rigidBody2D.velocity = Vector2.zero; 
     }
 }

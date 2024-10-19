@@ -2,10 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static BrickFactory;
 
 public class GameManager : MonoBehaviour
 {
     public int lives = 3; 
+
+    void Start()
+    {
+        AsignBrickType(); 
+    }
+
+    public void AsignBrickType()
+    {
+        Brick[] bricks = GetComponentsInChildren<Brick>();
+        BrickFactory factory = new BrickFactory();
+
+        foreach (Brick brick in bricks)
+        {
+            BrickType randomType = (BrickType)Random.Range(0, 3);
+            BrickFactory.ConfigureBrick(brick, randomType);
+        }
+    }
 
     public void LoseHealth()
     {
@@ -24,7 +42,6 @@ public class GameManager : MonoBehaviour
     public void ResetLevel()
     {
         FindObjectOfType<Ball>().ResetBall();
-
         FindObjectOfType<Player>().ResetPlayer();
     }
 
