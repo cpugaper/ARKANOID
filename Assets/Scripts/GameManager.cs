@@ -2,14 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 using static BrickFactory;
 
 public class GameManager : MonoBehaviour
 {
-    public int lives = 3; 
+    public int lives = 3;
 
     void Start()
     {
+        if (PlayerPrefs.HasKey("SavedLevel"))
+        {
+            int savedLvl = PlayerPrefs.GetInt("SavedLevel");
+
+            if (SceneManager.GetActiveScene().buildIndex != savedLvl)
+            {
+                SceneManager.LoadScene(savedLvl);
+            }
+        }
+
         AsignBrickType(); 
     }
 

@@ -9,9 +9,9 @@ public class Ball : MonoBehaviour
     public float speed = 200;
     private Vector2 velocity;
     private Vector2 startPosition;
-    private float maxSpeed = 12; 
+    private float maxSpeed = 10; 
 
-    public float speedMultiplier = 1.1f;
+    public float speedMultiplier = 1.05f;
 
     private bool gameStarted = false;
 
@@ -31,8 +31,6 @@ public class Ball : MonoBehaviour
                 LaunchBall();
             }
         }
-
-        Debug.Log("Velocidad de la pelota: " + rigidBody2D.velocity.magnitude);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
