@@ -1,13 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using static BrickFactory;
 
 public class GameManager : MonoBehaviour
 {
-    public int lives = 3;
+    private int lives = 3;
+    private int score = 0;
+    public Text livesText;
+    public Text scoreText;
+    public Text maxScoreText;
+
+    private int maxScore = 0; 
 
     void Start()
     {
@@ -21,13 +28,16 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        maxScore = PlayerPrefs.GetInt("MaxScore", 0);
+
+        UpdateHUD();
+
         AsignBrickType(); 
     }
 
     public void AsignBrickType()
     {
         Brick[] bricks = GetComponentsInChildren<Brick>();
-        BrickFactory factory = new BrickFactory();
 
         foreach (Brick brick in bricks)
         {
@@ -48,6 +58,8 @@ public class GameManager : MonoBehaviour
         {
             ResetLevel(); 
         }
+
+        UpdateHUD(); 
     }
 
     public void ResetLevel()
@@ -62,6 +74,29 @@ public class GameManager : MonoBehaviour
         {
             //buildIndex = buildSettings Index
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+    }
+
+    public void AddScore(int points)
+    {
+        score += points; 
+
+        if(score > maxScore)
+        {
+            maxScore = score;
+            PlayerPrefs.SetInt("MaxScore", maxScore);
+        }
+
+        UpdateHUD();
+    }
+
+    private void UpdateHUD()
+    {
+        if (livesText != null && scoreText != null && maxScoreText != null)
+        {
+            livesText.text = "LIVES: " + lives;
+            scoreText.text = "SCORE: " + score;
+            maxScoreText.text = "RECORD: " + maxScore;
         }
     }
 }

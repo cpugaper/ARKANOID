@@ -5,6 +5,7 @@ using UnityEngine;
 public class Brick : MonoBehaviour
 {
     public int brickLife;
+    public int points = 10; 
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -20,6 +21,7 @@ public class Brick : MonoBehaviour
 
         if (brickLife <= 0)
         {
+            FindObjectOfType<GameManager>().AddScore(points);
             FindObjectOfType<GameManager>().CheckLevelCompleted(); 
             Destroy(gameObject);
         }
