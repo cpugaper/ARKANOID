@@ -3,22 +3,35 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
+
 using static BrickFactory;
 
 public class GameManager : MonoBehaviour
 {
     private int lives = 3;
-    private int score = 0;
+    private int score = 0; 
+    private int maxScore = 0; 
+
     public Text livesText;
     public Text scoreText;
     public Text maxScoreText;
 
-    private int maxScore = 0; 
+    public WinMenu winMenu;
 
     void Start()
     {
-        if (PlayerPrefs.HasKey("SavedLevel"))
+        int hasLost = PlayerPrefs.GetInt("HasLost", 0);
+
+        if (hasLost == 1)
+        {
+            PlayerPrefs.SetInt("SavedLevel", 0);
+            PlayerPrefs.GetInt("Lives", 3);
+            PlayerPrefs.GetInt("Score", 0);
+            PlayerPrefs.GetInt("HasLost", 0);
+
+            Debug.Log("Saved game cannot be loaded because you lost");
+        }
+        else if (PlayerPrefs.HasKey("SavedLevel"))
         {
             int savedLvl = PlayerPrefs.GetInt("SavedLevel");
 
@@ -28,10 +41,11 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        lives = PlayerPrefs.GetInt("Lives", 3);
+        score = PlayerPrefs.GetInt("Score", 0);
         maxScore = PlayerPrefs.GetInt("MaxScore", 0);
 
         UpdateHUD();
-
         AsignBrickType(); 
     }
 
@@ -52,6 +66,7 @@ public class GameManager : MonoBehaviour
 
         if (lives <= 0)
         {
+            PlayerPrefs.SetInt("HasLost", 1);
             SceneManager.LoadScene("GameOver"); 
         }
         else
@@ -72,8 +87,7 @@ public class GameManager : MonoBehaviour
     {
         if (transform.childCount <= 1)
         {
-            //buildIndex = buildSettings Index
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            FindObjectOfType<WinMenu>().ShowWinScreen();
         }
     }
 

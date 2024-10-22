@@ -11,7 +11,7 @@ public class MainMenu : MonoBehaviour
 
     void Start()
     {
-        if (!PlayerPrefs.HasKey("SavedLevel"))
+        if (!PlayerPrefs.HasKey("SavedLevel") || PlayerPrefs.GetInt("HasLost", 0) == 1)
         {
             continueButton.interactable = false;  
         }
@@ -31,7 +31,7 @@ public class MainMenu : MonoBehaviour
 
     public void ContinueGame()
     {
-        if (PlayerPrefs.HasKey("SavedLevel"))
+        if (PlayerPrefs.HasKey("SavedLevel") && PlayerPrefs.GetInt("HasLost", 0) == 0)
         {
             int savedLvl = PlayerPrefs.GetInt("SavedLevel");
             SceneManager.LoadScene(savedLvl);
