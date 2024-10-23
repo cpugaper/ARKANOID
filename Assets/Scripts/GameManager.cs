@@ -16,9 +16,10 @@ public class GameManager : MonoBehaviour
     public Text scoreText;
     public Text maxScoreText;
 
+    public WinMenu winMenu;
+
     void Start()
     {
-
         int hasLost = PlayerPrefs.GetInt("HasLost", 0);
 
         if (hasLost == 1)
@@ -45,7 +46,7 @@ public class GameManager : MonoBehaviour
         maxScore = PlayerPrefs.GetInt("MaxScore", 0);
 
         UpdateHUD();
-        AsignBrickType();
+        AsignBrickType(); 
     }
 
     public void AsignBrickType()
@@ -86,31 +87,7 @@ public class GameManager : MonoBehaviour
     {
         if (transform.childCount <= 1)
         {
-            int nextLevel = SceneManager.GetActiveScene().buildIndex + 1;
-            int totalLevels = SceneManager.sceneCountInBuildSettings - 2; // -2 to not take into account the GameOver and Main Menu scenes
-
-            PlayerPrefs.SetInt("Lives", FindObjectOfType<GameManager>().lives);
-            PlayerPrefs.SetInt("Score", FindObjectOfType<GameManager>().score);
-            PlayerPrefs.SetInt("MaxScore", FindObjectOfType<GameManager>().maxScore);
-
-            PlayerPrefs.SetInt("SavedLevel", SceneManager.GetActiveScene().buildIndex + 1);
-
-            Time.timeScale = 1f;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-
-            // if we complete last level, return to level1 
-            if (nextLevel >= totalLevels)
-            {
-                PlayerPrefs.SetInt("SavedLevel", 1);
-                SceneManager.LoadScene("Level1");
-            }
-            else
-            {
-                PlayerPrefs.SetInt("SavedLevel", nextLevel);
-                SceneManager.LoadScene(nextLevel);
-            }
-
-            PlayerPrefs.Save(); 
+            FindObjectOfType<WinMenu>().ShowWinScreen();
         }
     }
 
