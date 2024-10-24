@@ -15,9 +15,12 @@ public class GameManager : MonoBehaviour
     public Text livesText;
     public Text scoreText;
     public Text maxScoreText;
+    public WinMenu winMenu;
 
     void Start()
     {
+
+        winMenu = FindObjectOfType<WinMenu>();
 
         int hasLost = PlayerPrefs.GetInt("HasLost", 0);
 
@@ -86,32 +89,33 @@ public class GameManager : MonoBehaviour
     {
         if (transform.childCount <= 1)
         {
-            int nextLevel = SceneManager.GetActiveScene().buildIndex + 1;
-            int totalLevels = SceneManager.sceneCountInBuildSettings - 2; // -2 to not take into account the GameOver and Main Menu scenes
-
-            PlayerPrefs.SetInt("Lives", FindObjectOfType<GameManager>().lives);
-            PlayerPrefs.SetInt("Score", FindObjectOfType<GameManager>().score);
-            PlayerPrefs.SetInt("MaxScore", FindObjectOfType<GameManager>().maxScore);
-
-            PlayerPrefs.SetInt("SavedLevel", SceneManager.GetActiveScene().buildIndex + 1);
-
-            Time.timeScale = 1f;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-
-            // if we complete last level, return to level1 
-            if (nextLevel >= totalLevels)
-            {
-                PlayerPrefs.SetInt("SavedLevel", 1);
-                SceneManager.LoadScene("Level1");
-            }
-            else
-            {
-                PlayerPrefs.SetInt("SavedLevel", nextLevel);
-                SceneManager.LoadScene(nextLevel);
-            }
-
-            PlayerPrefs.Save(); 
+            winMenu.ShowWinMenu();
         }
+    }
+
+    public void LoadNextLevel()
+    {
+        int nextLevel = SceneManager.GetActiveScene().buildIndex + 1;
+        int totalLevels = SceneManager.sceneCountInBuildSettings - 2; // -2 to not take into account the GameOver and Main Menu scenes
+
+        PlayerPrefs.SetInt("Lives", lives);
+        PlayerPrefs.SetInt("Score", score);
+        PlayerPrefs.SetInt("MaxScore", maxScore);
+
+        PlayerPrefs.SetInt("SavedLevel", SceneManager.GetActiveScene().buildIndex + 1);
+        PlayerPrefs.Save();
+
+        // if we complete last level, return to level1 
+        if (nextLevel >= totalLevels)
+        {
+            SceneManager.LoadScene("Level1");
+        }
+        else
+        {
+            SceneManager.LoadScene(nextLevel);
+        }
+        
+        Time.timeScale = 1f;
     }
 
     public void AddScore(int points)

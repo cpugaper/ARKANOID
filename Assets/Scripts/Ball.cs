@@ -9,7 +9,7 @@ public class Ball : MonoBehaviour
     public float speed = 200;
     private Vector2 velocity;
     private Vector2 startPosition;
-    private float maxSpeed = 10; 
+    private float maxSpeed = 7; 
 
     public float speedMultiplier = 1.05f;
 

@@ -11,11 +11,16 @@ public class Player : MonoBehaviour
     private Vector2 direction;
     Vector2 startPosition;
 
+    // Power Up
+    public GameObject bulletPrefab;
+    public float shootingInterval = 0.5f;
+    private Coroutine shootingCoroutine;
+
     private void Start()
     {
+        rigidBody2D = GetComponent<Rigidbody2D>();
         startPosition = transform.position; 
     }
-
 
     void Update()
     {
@@ -35,7 +40,26 @@ public class Player : MonoBehaviour
         }
 
         rigidBody2D.AddForce(direction * moveSpeed * Time.deltaTime * 100);
+    }
 
+    public void ActivateShooting(float duration)
+    {
+        if (shootingCoroutine != null)
+        {
+            StopCoroutine(shootingCoroutine);
+        }
+        shootingCoroutine = StartCoroutine(Shoot(duration));
+    }
+
+    private IEnumerator Shoot(float duration)
+    {
+        float endTime = Time.time + duration;
+
+        while (Time.time < endTime)
+        {
+            Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
     public void ResetPlayer()
