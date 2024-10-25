@@ -10,6 +10,14 @@ public class Brick : MonoBehaviour
     public GameObject powerUpPrefab;
     public float dropRate = 0.2f;
 
+    private SpriteRenderer spriteRenderer;
+    private float opacityDecrease = 0.5f;
+
+    private void Start()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ball"))
@@ -21,6 +29,10 @@ public class Brick : MonoBehaviour
     public void TakeDamage()
     {
         brickLife--;
+
+        Color color = spriteRenderer.color;
+        color.a = Mathf.Max(color.a - opacityDecrease, 0.1f);
+        spriteRenderer.color = color; 
 
         if (brickLife <= 0)
         {
