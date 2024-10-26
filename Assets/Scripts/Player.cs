@@ -94,14 +94,10 @@ public class Player : MonoBehaviour
     {
         isAutoMode = !isAutoMode;
         sliderMoved = false;
-        UpdateAutoModeButtonText(button);
-        Debug.Log("Modo automático: " + (isAutoMode ? "Activado" : "Desactivado"));
-    }
-    public void UpdateAutoModeButtonText(Button button)
-    {
         if (button != null)
         {
             button.GetComponentInChildren<Text>().text = isAutoMode ? "AUTO ON" : "AUTO OFF";
         }
+        Debug.Log("Modo automático: " + (isAutoMode ? "Activado" : "Desactivado"));
     }
 }
