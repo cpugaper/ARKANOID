@@ -1,15 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
 
     public Rigidbody2D rigidBody2D;
-    private float inputValue;
+    public Slider slider;
     public float moveSpeed = 25;
-    private Vector2 direction;
     Vector2 startPosition;
+    private bool sliderMoved = false; 
 
     // Power Up
     public GameObject bulletPrefab;
@@ -19,27 +21,25 @@ public class Player : MonoBehaviour
     private void Start()
     {
         rigidBody2D = GetComponent<Rigidbody2D>();
-        startPosition = transform.position; 
+        startPosition = transform.position;
+        slider.onValueChanged.AddListener(OnSliderValueChanged);
     }
 
-    void Update()
+    private void OnSliderValueChanged(float value)
     {
-        inputValue = Input.GetAxisRaw("Horizontal");
+        Vector2 newPosition = new Vector2(value * moveSpeed * Time.deltaTime, transform.position.y);
+        rigidBody2D.MovePosition(newPosition);
 
-        if (inputValue == 1)
+        if (!sliderMoved)
         {
-            direction = Vector2.right;
-        }
-        else if (inputValue == -1)
-        {
-            direction = Vector2.left;
-        }
-        else
-        {
-            direction = Vector2.zero; 
-        }
+            sliderMoved = true;
 
-        rigidBody2D.AddForce(direction * moveSpeed * Time.deltaTime * 100);
+            Ball ball = FindObjectOfType<Ball>();
+            if (ball != null)
+            {
+                ball.LaunchBall();
+            }
+        }
     }
 
     public void ActivateShooting(float duration)
@@ -65,6 +65,8 @@ public class Player : MonoBehaviour
     public void ResetPlayer()
     {
         transform.position = startPosition;
-        rigidBody2D.velocity = Vector2.zero; 
+        rigidBody2D.velocity = Vector2.zero;
+        slider.value = 0;
+        sliderMoved = false; 
     }
 }

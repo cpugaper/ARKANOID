@@ -19,7 +19,6 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-
         winMenu = FindObjectOfType<WinMenu>();
 
         int hasLost = PlayerPrefs.GetInt("HasLost", 0);

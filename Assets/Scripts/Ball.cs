@@ -9,10 +9,9 @@ public class Ball : MonoBehaviour
     public float speed = 200;
     private Vector2 velocity;
     private Vector2 startPosition;
-    private float maxSpeed = 7; 
-
+    private float maxSpeed = 7;
+    private float launchTimer = 5.0f;
     public float speedMultiplier = 1.05f;
-
     private bool gameStarted = false;
 
     public AudioSource audioSource;
@@ -28,11 +27,22 @@ public class Ball : MonoBehaviour
     {
         if (!gameStarted)
         {
-            if (Input.GetAxisRaw("Horizontal") != 0)
+            launchTimer -= Time.deltaTime;
+            if (launchTimer <= 0)
             {
-                gameStarted = true;
                 LaunchBall();
             }
+        }
+    }
+
+    public void LaunchBall()
+    {
+        if (!gameStarted)
+        {
+            gameStarted = true;
+            velocity.x = Random.Range(-1f, 1f);
+            velocity.y = 1;
+            rigidBody2D.AddForce(velocity.normalized * speed);
         }
     }
 
@@ -87,13 +97,7 @@ public class Ball : MonoBehaviour
         transform.position = startPosition;
         rigidBody2D.velocity = Vector2.zero;
         velocity = Vector2.zero;
-        gameStarted = false; 
-    }
-
-    private void LaunchBall()
-    {
-        velocity.x = Random.Range(-1f, 1f);
-        velocity.y = 1;
-        rigidBody2D.AddForce(velocity.normalized * speed);
+        gameStarted = false;
+        launchTimer = 5.0f; 
     }
 }
