@@ -17,9 +17,6 @@ public class Ball : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip playerSound, brickSound, wallSound, deadZoneSound;
 
-    //screen boundary 
-    private float screenTop, screenBottom, screenLeft, screenRight;
-
     void Start()
     {
         startPosition = transform.position;

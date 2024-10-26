@@ -27,25 +27,14 @@ public class GameManager : MonoBehaviour
         winMenu = FindObjectOfType<WinMenu>();
         pauseMenu = FindObjectOfType< PauseMenu>();
 
-        int hasLost = PlayerPrefs.GetInt("HasLost", 0);
-
-        if (hasLost == 1)
+        if (PlayerPrefs.GetInt("HasLost", 0) == 1)
         {
-            PlayerPrefs.SetInt("SavedLevel", 0);
-            PlayerPrefs.GetInt("Lives", 3);
-            PlayerPrefs.GetInt("Score", 0);
-            PlayerPrefs.GetInt("HasLost", 0);
-
+            ResetPlayerPrefs(); 
             Debug.Log("Saved game cannot be loaded because you lost");
         }
-        else if (PlayerPrefs.HasKey("SavedLevel"))
+        else
         {
-            int savedLvl = PlayerPrefs.GetInt("SavedLevel");
-
-            if (SceneManager.GetActiveScene().buildIndex != savedLvl)
-            {
-                SceneManager.LoadScene(savedLvl);
-            }
+            LoadSavedLevel(); 
         }
 
         lives = PlayerPrefs.GetInt("Lives", 3);
@@ -57,23 +46,38 @@ public class GameManager : MonoBehaviour
         AsignBrickType();
     }
 
+    private void ResetPlayerPrefs()
+    {
+        PlayerPrefs.SetInt("SavedLevel", 0);
+        PlayerPrefs.GetInt("Lives", 3);
+        PlayerPrefs.GetInt("Score", 0);
+        PlayerPrefs.GetInt("HasLost", 0);
+    }
+
+    private void LoadSavedLevel()
+    {
+        if (PlayerPrefs.HasKey("SavedLevel"))
+        {
+            int savedLevel = PlayerPrefs.GetInt("SavedLevel", 0);
+            if (SceneManager.GetActiveScene().buildIndex != savedLevel)
+            {
+                SceneManager.LoadScene(savedLevel);
+            }
+        }
+    }
+
     public void ButtonInteractability()
     {
-        bool isAnyMenuActive = (winMenu != null && winMenu.winMenuUI.activeSelf) || 
-                               (pauseMenu != null && pauseMenu.pauseMenuUI.activeSelf);
-
+        bool isAnyMenuActive = (winMenu != null && winMenu.winMenuUI.activeSelf) || (pauseMenu != null && pauseMenu.pauseMenuUI.activeSelf);
         if (autoButton != null) autoButton.interactable = !isAnyMenuActive;
         if (pauseButton != null) pauseButton.interactable = !isAnyMenuActive;
     }
 
     public void AsignBrickType()
     {
-        Brick[] bricks = GetComponentsInChildren<Brick>();
-
-        foreach (Brick brick in bricks)
+        foreach (var brick in GetComponentsInChildren<Brick>())
         {
-            BrickType randomType = (BrickType)Random.Range(0, 3);
-            BrickFactory.ConfigureBrick(brick, randomType);
+            BrickFactory.ConfigureBrick(brick, (BrickType)Random.Range(0, 3));
         }
     }
 
@@ -109,18 +113,14 @@ public class GameManager : MonoBehaviour
     }
 
     public void LoadNextLevel()
-    {
-        string currentLevel = SceneManager.GetActiveScene().name;
-        string nextLevel = GetNextLevelName(currentLevel);
-        
+    { 
         PlayerPrefs.SetInt("Lives", lives);
         PlayerPrefs.SetInt("Score", score);
         PlayerPrefs.SetInt("MaxScore", maxScore);
-        
         PlayerPrefs.SetInt("SavedLevel", SceneManager.GetActiveScene().buildIndex + 1);
         PlayerPrefs.Save();
 
-        SceneManager.LoadScene(nextLevel);
+        SceneManager.LoadScene(GetNextLevelName(SceneManager.GetActiveScene().name));
         
         Time.timeScale = 1f;
     }

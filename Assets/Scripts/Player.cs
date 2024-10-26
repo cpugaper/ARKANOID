@@ -38,9 +38,8 @@ public class Player : MonoBehaviour
     {
         Ball ball = FindObjectOfType<Ball>();
         if (ball != null)
-        {  
-            float ballXPosition = ball.transform.position.x;
-            Vector2 newPlayerPosition = new Vector2(ballXPosition, transform.position.y);
+        {
+            Vector2 newPlayerPosition = new Vector2(ball.transform.position.x, transform.position.y);
             rigidBody2D.MovePosition(newPlayerPosition);
         }
     }
@@ -49,7 +48,6 @@ public class Player : MonoBehaviour
     {
         float targetPositionX = value * (Screen.width / 100); 
         Vector2 targetPosition = new Vector2(targetPositionX, transform.position.y);
-
         rigidBody2D.position = Vector2.Lerp(rigidBody2D.position, targetPosition, Time.deltaTime * moveSpeed);
 
         if (!sliderMoved)
