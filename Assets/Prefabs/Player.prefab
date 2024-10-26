@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rigidBody2D: {fileID: 5295049427609661977}
+  slider: {fileID: 0}
   moveSpeed: 25
   bulletPrefab: {fileID: 5944109074942639743, guid: e10b6ed39aace614f80e3d4fcff2822f, type: 3}
   shootingInterval: 0.5

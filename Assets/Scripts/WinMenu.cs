@@ -20,12 +20,14 @@ public class WinMenu : MonoBehaviour
     public void ShowWinMenu()
     {
         winMenuUI.SetActive(true);
-        Time.timeScale = 0f; 
+        Time.timeScale = 0f;
+        gameManager.ButtonInteractability();
     }
 
     public void NextLevel()
     {
         winMenuUI.SetActive(false);
         gameManager.LoadNextLevel();
+        gameManager.ButtonInteractability();
     }
 }

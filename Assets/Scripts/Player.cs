@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,8 +9,9 @@ public class Player : MonoBehaviour
     public Rigidbody2D rigidBody2D;
     public Slider slider;
     public float moveSpeed = 25;
-    Vector2 startPosition;
-    private bool sliderMoved = false; 
+    private Vector2 startPosition;
+    private bool sliderMoved = false;
+    private bool isAutoMode = false; 
 
     // Power Up
     public GameObject bulletPrefab;
@@ -21,14 +21,36 @@ public class Player : MonoBehaviour
     private void Start()
     {
         rigidBody2D = GetComponent<Rigidbody2D>();
+        rigidBody2D.interpolation = RigidbodyInterpolation2D.Interpolate;
         startPosition = transform.position;
         slider.onValueChanged.AddListener(OnSliderValueChanged);
     }
 
+    private void Update()
+    {
+        if (isAutoMode)
+        {
+            AutoMove(); 
+        }
+    }
+
+    private void AutoMove()
+    {
+        Ball ball = FindObjectOfType<Ball>();
+        if (ball != null)
+        {  
+            float ballXPosition = ball.transform.position.x;
+            Vector2 newPlayerPosition = new Vector2(ballXPosition, transform.position.y);
+            rigidBody2D.MovePosition(newPlayerPosition);
+        }
+    }
+
     private void OnSliderValueChanged(float value)
     {
-        Vector2 newPosition = new Vector2(value * moveSpeed * Time.deltaTime, transform.position.y);
-        rigidBody2D.MovePosition(newPosition);
+        float targetPositionX = value * (Screen.width / 100); 
+        Vector2 targetPosition = new Vector2(targetPositionX, transform.position.y);
+
+        rigidBody2D.position = Vector2.Lerp(rigidBody2D.position, targetPosition, Time.deltaTime * moveSpeed);
 
         if (!sliderMoved)
         {
@@ -68,5 +90,20 @@ public class Player : MonoBehaviour
         rigidBody2D.velocity = Vector2.zero;
         slider.value = 0;
         sliderMoved = false; 
+    }
+
+    public void ToggleAutoMode(Button button)
+    {
+        isAutoMode = !isAutoMode;
+        sliderMoved = false;
+        UpdateAutoModeButtonText(button);
+        Debug.Log("Modo automático: " + (isAutoMode ? "Activado" : "Desactivado"));
+    }
+    public void UpdateAutoModeButtonText(Button button)
+    {
+        if (button != null)
+        {
+            button.GetComponentInChildren<Text>().text = isAutoMode ? "AUTO ON" : "AUTO OFF";
+        }
     }
 }

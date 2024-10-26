@@ -15,11 +15,17 @@ public class GameManager : MonoBehaviour
     public Text livesText;
     public Text scoreText;
     public Text maxScoreText;
+    
     public WinMenu winMenu;
+    public PauseMenu pauseMenu;   
+    
+    public Button autoButton;
+    public Button pauseButton;
 
     void Start()
     {
         winMenu = FindObjectOfType<WinMenu>();
+        pauseMenu = FindObjectOfType< PauseMenu>();
 
         int hasLost = PlayerPrefs.GetInt("HasLost", 0);
 
@@ -46,8 +52,18 @@ public class GameManager : MonoBehaviour
         score = PlayerPrefs.GetInt("Score", 0);
         maxScore = PlayerPrefs.GetInt("MaxScore", 0);
 
+        ButtonInteractability();
         UpdateHUD();
         AsignBrickType();
+    }
+
+    public void ButtonInteractability()
+    {
+        bool isAnyMenuActive = (winMenu != null && winMenu.winMenuUI.activeSelf) || 
+                               (pauseMenu != null && pauseMenu.pauseMenuUI.activeSelf);
+
+        if (autoButton != null) autoButton.interactable = !isAnyMenuActive;
+        if (pauseButton != null) pauseButton.interactable = !isAnyMenuActive;
     }
 
     public void AsignBrickType()
@@ -94,27 +110,32 @@ public class GameManager : MonoBehaviour
 
     public void LoadNextLevel()
     {
-        int nextLevel = SceneManager.GetActiveScene().buildIndex + 1;
-        int totalLevels = SceneManager.sceneCountInBuildSettings - 2; // -2 to not take into account the GameOver and Main Menu scenes
-
+        string currentLevel = SceneManager.GetActiveScene().name;
+        string nextLevel = GetNextLevelName(currentLevel);
+        
         PlayerPrefs.SetInt("Lives", lives);
         PlayerPrefs.SetInt("Score", score);
         PlayerPrefs.SetInt("MaxScore", maxScore);
-
+        
         PlayerPrefs.SetInt("SavedLevel", SceneManager.GetActiveScene().buildIndex + 1);
         PlayerPrefs.Save();
 
-        // if we complete last level, return to level1 
-        if (nextLevel >= totalLevels)
-        {
-            SceneManager.LoadScene("Level1");
-        }
-        else
-        {
-            SceneManager.LoadScene(nextLevel);
-        }
+        SceneManager.LoadScene(nextLevel);
         
         Time.timeScale = 1f;
+    }
+
+    private string GetNextLevelName(string currentLevel)
+    {
+        switch (currentLevel)
+        {
+            case "Level1":
+                return "Level2";
+            case "Level2":
+                return "Level1";
+            default:
+                return "Level1";
+        }
     }
 
     public void AddScore(int points)

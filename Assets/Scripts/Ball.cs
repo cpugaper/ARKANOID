@@ -10,17 +10,20 @@ public class Ball : MonoBehaviour
     private Vector2 velocity;
     private Vector2 startPosition;
     private float maxSpeed = 7;
-    private float launchTimer = 5.0f;
+    private float launchTimer = 2.0f;
     public float speedMultiplier = 1.05f;
     private bool gameStarted = false;
 
     public AudioSource audioSource;
-    public AudioClip playerSound, brickSound, wallSound, deadZoneSound; 
+    public AudioClip playerSound, brickSound, wallSound, deadZoneSound;
+
+    //screen boundary 
+    private float screenTop, screenBottom, screenLeft, screenRight;
 
     void Start()
     {
         startPosition = transform.position;
-        ResetBall(); 
+        ResetBall();
     }
 
     void Update()
@@ -58,19 +61,27 @@ public class Ball : MonoBehaviour
 
         if (Mathf.Abs(rigidBody2D.velocity.x) < 0.5f)
         {
-            rigidBody2D.velocity = new Vector2(0.5f * Mathf.Sign(rigidBody2D.velocity.x), rigidBody2D.velocity.y).normalized * rigidBody2D.velocity.magnitude;
+            rigidBody2D.velocity = new Vector2(0.5f * Mathf.Sign(rigidBody2D.velocity.x),
+                 rigidBody2D.velocity.y).normalized * rigidBody2D.velocity.magnitude;
         }
 
         if (Mathf.Abs(rigidBody2D.velocity.y) < 0.5f)
         {
-            rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, 0.5f * Mathf.Sign(rigidBody2D.velocity.y)).normalized * rigidBody2D.velocity.magnitude;
+            rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x,
+                0.5f * Mathf.Sign(rigidBody2D.velocity.y)).normalized * rigidBody2D.velocity.magnitude;
         }
 
         if (collision.gameObject.CompareTag("DeadZone"))
         {
             audioSource.clip = deadZoneSound;
             audioSource.Play();
-            FindObjectOfType<GameManager>().LoseHealth(); 
+            FindObjectOfType<GameManager>().LoseHealth();
+        }
+
+        if (collision.transform.CompareTag("Wall"))
+        {
+            audioSource.clip = wallSound;
+            audioSource.Play();
         }
 
         if (collision.gameObject.GetComponent<Player>())
@@ -84,12 +95,6 @@ public class Ball : MonoBehaviour
             audioSource.clip = playerSound;
             audioSource.Play();
         }
-
-        if (collision.transform.CompareTag("Wall"))
-        {
-            audioSource.clip = wallSound;
-            audioSource.Play();
-        }
     }
 
     public void ResetBall()
@@ -98,6 +103,6 @@ public class Ball : MonoBehaviour
         rigidBody2D.velocity = Vector2.zero;
         velocity = Vector2.zero;
         gameStarted = false;
-        launchTimer = 5.0f; 
+        launchTimer = 2.0f; 
     }
 }
